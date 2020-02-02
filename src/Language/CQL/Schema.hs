@@ -37,6 +37,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE UndecidableInstances  #-}
 --{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE DeriveGeneric         #-}
 
 module Language.CQL.Schema where
 import           Control.DeepSeq
@@ -46,6 +47,7 @@ import           Data.Maybe
 import           Data.Set              as Set
 import           Data.Typeable
 import           Data.Void
+import           GHC.Generics
 import           Language.CQL.Collage (Collage(..), typeOfCol)
 import           Language.CQL.Common
 import           Language.CQL.Options
@@ -54,7 +56,7 @@ import           Language.CQL.Term
 import           Language.CQL.Typeside
 -- cyclic import           Language.CQL.Instance
 import           Prelude               hiding (EQ)
--- import           Data.Aeson            hiding (Options)
+import           Data.Aeson            hiding (Options)
 
 
 data Schema var ty sym en fk att
@@ -154,7 +156,7 @@ data SchemaExp where
   SchemaRaw     :: SchemaExpRaw'          -> SchemaExp
   -- hold off for now, causes cyclic import
   -- SchemaPivot   :: InstanceExp            -> SchemaExp
-  deriving (Eq,Show)
+  deriving (Eq,Show, Generic)
 
 getOptionsSchema :: SchemaExp -> [(String, String)]
 getOptionsSchema x = case x of
@@ -195,7 +197,7 @@ data SchemaExpRaw' = SchemaExpRaw'
   , schraw_oeqs    :: [(String, Maybe String, RawTerm, RawTerm)]
   , schraw_options :: [(String, String)]
   , schraw_imports :: [SchemaExp]
-} deriving (Eq, Show)
+} deriving (Eq, Show, Generic)
 
 -- | Type of entities for literal schemas.
 type En = String
@@ -318,6 +320,8 @@ evalSchemaRaw ops ty t a' = do
       Just ts' -> do { r'  <- doImports r ; return $ ts' : r' }
 
 ----------------------------------------------------
+instance ToJSON SchemaExpRaw'
+instance ToJSON SchemaExp
 -- instance (TyMap ToJSON '[var, ty, sym, en, fk, att, Void], TyMap ToJSONKey '[var, ty, sym, fk, att])
 --   => ToJSON (Schema var ty sym en fk att)
 --   where

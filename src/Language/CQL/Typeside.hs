@@ -49,6 +49,7 @@ import           Data.Set              (Set)
 import qualified Data.Set              as Set
 import           Data.Typeable
 import           Data.Void
+import           GHC.Generics
 import           Language.CQL.Collage  (Collage(..), typeOfCol)
 import           Language.CQL.Common
 import           Language.CQL.Options
@@ -56,8 +57,6 @@ import           Language.CQL.Prover
 import           Language.CQL.Term
 import           Prelude               hiding (EQ)
 import           Data.Aeson            hiding (Options)
-
-import GHC.Generics
 
 -- | A user-defined kind for customization of data types.
 data Typeside var ty sym
