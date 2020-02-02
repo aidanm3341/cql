@@ -36,11 +36,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE UndecidableInstances  #-}
 {-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE DeriveGeneric         #-}
 
 module Language.CQL.Program where
 
 import           Control.DeepSeq
+import           Data.Aeson
 import           Data.Map.Strict        as Map
+import           GHC.Generics
 import           Language.CQL.Common    (section, TyMap, Kind(..))
 import           Language.CQL.Instance  as I
 import           Language.CQL.Mapping   as M
@@ -50,7 +53,7 @@ import           Language.CQL.Term      as Term
 import           Language.CQL.Transform as Tr
 import           Language.CQL.Typeside  as T
 import           Prelude                hiding (EQ)
-import           Data.Aeson
+
 
 -- | Top level CQL expressions, untyped.
 data Exp
@@ -90,7 +93,7 @@ data KindCtx ts s i m q t o
   , queries    :: Ctx String q
   , transforms :: Ctx String t
   , other      :: o
-  }
+  } deriving (Generic)
 
 -- | A CQL program.
 type Prog = KindCtx TypesideExp SchemaExp InstanceExp MappingExp QueryExp TransformExp [(String, String)]
@@ -133,15 +136,17 @@ allVars ctx =
   (fmap (, TRANSFORM) . keys . transforms $ ctx)
 
   ----------------------------------------------------------------------------------------------------
-instance TyMap ToJSON '[ts, s, i, m, q, t, o] => ToJSON (KindCtx ts s i m q t o) where
-  toJSON (KindCtx ts s i m q t o) = 
-    object [
-      "typesides" .= ts,
-      "schema" .= s,
-      "instance" .= i,
-      "m" .= m,
-      "q" .= q,
-      "t" .= t,
-      "o" .= o
-    ]
+-- instance TyMap ToJSON '[ts, s, i, m, q, t, o] => ToJSON (KindCtx ts s i m q t o) where
+--   toJSON (KindCtx ts s i m q t o) = 
+--     object [
+--       "typesides" .= ts,
+--       "schema" .= s,
+--       "instance" .= i,
+--       "m" .= m,
+--       "q" .= q,
+--       "t" .= t,
+--       "o" .= o
+--     ]
+
+instance TyMap ToJSON '[ts, s, i, m, q, t, o] => ToJSON (KindCtx ts s i m q t o) 
     

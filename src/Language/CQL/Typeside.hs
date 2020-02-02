@@ -251,14 +251,14 @@ getOptionsTypeside x = case x of
   TypesideRaw (TypesideRaw' _ _ _ o _) -> o
 
   --------------------------------------------------------------------------------------
-instance (TyMap ToJSON '[var, ty, sym, Void], TyMap ToJSONKey '[var, ty, sym])
-  => ToJSON (Typeside var ty sym) where
-  toJSON (Typeside tys syms eqs _) =
-    object [
-      "tys" .= tys
-      , "syms" .= syms
-      , "eqs" .= eqs
-    ]
+-- instance (TyMap ToJSON '[var, ty, sym, Void], TyMap ToJSONKey '[var, ty, sym])
+--   => ToJSON (Typeside var ty sym) where
+--   toJSON (Typeside tys syms eqs _) =
+--     object [
+--       "tys" .= tys
+--       , "syms" .= syms
+--       , "eqs" .= eqs
+--     ]
 
 -- instance ToJSON TypesideExp where
 --   toJSON _ = object ["test" .= True]
