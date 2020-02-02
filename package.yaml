@@ -1,0 +1,100 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# This file is part of `statebox/cql`, the categorical query language.
+#
+# Copyright (C) 2019 Stichting Statebox <https://statebox.nl>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+name:                cql
+version:             0.1.0.0
+github:              "statebox/cql"
+license:             AGPL
+author:              "Statebox"
+copyright:           "2019 Statebox"
+
+extra-source-files:
+- README.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/statebox/cql#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- aeson
+- aeson-pretty
+- bytestring
+- containers
+- lens
+- megaparsec
+- QuickCheck
+- scientific
+- semigroups
+- term-rewriting
+- tabular
+- deepseq
+- twee-lib
+- optparse-applicative
+- pretty
+- containers
+- union-find >=0.2 && <0.3
+- fgl >=5.5
+- mtl >= 2.0
+- PropLogic >= 0.9.0.4
+
+library:
+  source-dirs: src
+
+ghc-options:
+- -Weverything
+- -Werror
+- -Wno-implicit-prelude
+- -Wno-missing-export-lists
+- -Wno-missing-import-lists
+- -Wno-safe
+- -Wno-missing-local-signatures
+- -Wno-unsafe
+- -Wno-monomorphism-restriction
+- -Wno-unused-type-patterns
+- -Wno-name-shadowing
+
+executables:
+  cql:
+    main:                Main.hs
+    source-dirs:         cli
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - cql
+
+tests:
+  cql-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - cql
+    - hspec
+    - QuickCheck
