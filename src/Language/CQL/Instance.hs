@@ -35,11 +35,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 {-# LANGUAGE TypeOperators         #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE UndecidableInstances  #-}
+{-# LANGUAGE DeriveGeneric         #-}
 
 module Language.CQL.Instance where
 
 import           Control.DeepSeq
 import           Control.Monad
+import           Data.Aeson            hiding (Options)
 import           Data.List             as List hiding (intercalate)
 import           Data.Map.Strict       (Map, member, unionWith, (!))
 import qualified Data.Map.Strict       as Map
@@ -48,6 +50,7 @@ import           Data.Set              (Set)
 import qualified Data.Set              as Set
 import           Data.Typeable         hiding (typeOf)
 import           Data.Void
+import           GHC.Generics
 import           Language.CQL.Collage  (Collage(..), assembleGens, attsFrom, fksFrom, typeOf)
 import           Language.CQL.Common   (elem', fromListAccum, section, toMapSafely, Deps(..), Err, Kind(INSTANCE), MultiTyMap, TyMap, type (+))
 import           Language.CQL.Instance.Algebra (Algebra(..), aAtt, Carrier, down1, evalSchTerm, evalSchTerm', nf, nf'', repr'', TalgGen(..))
@@ -313,7 +316,7 @@ data InstanceExp where
   InstanceRaw     :: InstExpRaw'                                     -> InstanceExp
   InstancePivot   :: InstanceExp                                     -> InstanceExp
 
-  deriving (Eq, Show)
+  deriving (Eq, Show, Generic)
 
 instance Deps InstanceExp where
   deps x = case x of
@@ -351,7 +354,7 @@ data InstExpRaw' =
   , instraw_oeqs    :: [(RawTerm, RawTerm)]
   , instraw_options :: [(String, String)]
   , instraw_imports :: [InstanceExp]
-} deriving (Eq, Show)
+} deriving (Eq, Show, Generic)
 
 type Gen = String
 type Sk  = String
@@ -639,3 +642,9 @@ instance (TyMap Show '[var, ty, sym, en, fk, att, gen, sk, x, y], Eq en, Eq fk, 
       [ section "presentation" $ show p
       , section "algebra"      $ show alg
       ]
+
+----------------------------------------------------------------------------------------------------------
+-- JSON
+
+instance ToJSON InstanceExp
+instance ToJSON InstExpRaw'

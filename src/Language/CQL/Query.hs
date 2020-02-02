@@ -36,13 +36,16 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 {-# LANGUAGE TypeOperators         #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE UndecidableInstances  #-}
+{-# LANGUAGE DeriveGeneric         #-}
 
 module Language.CQL.Query where
 import           Control.DeepSeq
+import           Data.Aeson
 import           Data.Map.Strict      as Map
 import           Data.Set             as Set
 import           Data.Typeable
 import           Data.Void
+import           GHC.Generics
 import           Language.CQL.Common
 import           Language.CQL.Schema
 import           Language.CQL.Term
@@ -89,7 +92,7 @@ data QueryExp where
   QueryVar     :: String       -> QueryExp
   QueryId      :: SchemaExp    -> QueryExp
   QueryRaw     :: QueryExpRaw' -> QueryExp
-  deriving (Eq)
+  deriving (Eq, Generic)
 
 instance Show QueryExp where
   show _ = error "todo"
@@ -115,7 +118,7 @@ data QueryExpRaw' = QueryExpRaw'
   , qraw_atts    :: [(String, RawTerm)]
   , qraw_options :: [(String, String)]
   , qraw_imports :: [QueryExp]
-} deriving (Eq, Show)
+} deriving (Eq, Show, Generic)
 
 typecheckQuery
   :: Query var ty sym en fk att en' fk' att'
@@ -123,3 +126,5 @@ typecheckQuery
 typecheckQuery = undefined
 
 --------------------------------------------------------------------------------
+instance ToJSON QueryExp
+instance ToJSON QueryExpRaw'

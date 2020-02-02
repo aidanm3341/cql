@@ -36,16 +36,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 {-# LANGUAGE TypeOperators         #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE UndecidableInstances  #-}
+{-# LANGUAGE DeriveGeneric         #-}
 
 module Language.CQL.Mapping where
 
 import           Control.DeepSeq
+import           Data.Aeson            hiding (Options)
 import           Data.Map.Strict       (Map)
 import           Data.Map.Strict       as Map
 import           Data.Maybe
 import qualified Data.Set              as Set
 import           Data.Typeable
 import           Data.Void
+import           GHC.Generics
 import           Language.CQL.Common
 import           Language.CQL.Morphism (Morphism(..), translate, translate')
 import           Language.CQL.Morphism as Morphism (typeOf)
@@ -149,7 +152,7 @@ data MappingExp where
   MappingId      :: SchemaExp                -> MappingExp
   MappingRaw     :: MappingExpRaw'           -> MappingExp
   MappingComp    :: MappingExp -> MappingExp -> MappingExp
-  deriving (Eq, Show)
+  deriving (Eq, Show, Generic)
 
 getOptionsMapping :: MappingExp -> [(String, String)]
 getOptionsMapping x = case x of
@@ -205,7 +208,7 @@ data MappingExpRaw' =
   , mapraw_atts    :: [(String, (String, Maybe String, RawTerm)+[String])]
   , mapraw_options :: [(String, String)]
   , mapraw_imports :: [MappingExp]
-} deriving (Eq, Show)
+} deriving (Eq, Show, Generic)
 
 -- | Does the hard work of @evalMappingRaw@.
 evalMappingRaw'
@@ -315,3 +318,7 @@ evalMappingRaw src' dst' t is = do
     doImports (MappingEx ts : r) = case cast ts of
       Nothing  -> Left "Bad import"
       Just ts' -> do { r'  <- doImports r ; return $ ts' : r' }
+      
+--------------------------------------------------------------------------------
+instance ToJSON MappingExp
+instance ToJSON MappingExpRaw'

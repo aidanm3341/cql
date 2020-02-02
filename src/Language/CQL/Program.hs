@@ -133,10 +133,15 @@ allVars ctx =
   (fmap (, TRANSFORM) . keys . transforms $ ctx)
 
   ----------------------------------------------------------------------------------------------------
-instance TyMap ToJSON '[ts, s] => ToJSON (KindCtx ts s i m q t o) where
-  toJSON (KindCtx ts s _ _ _ _ _) = 
+instance TyMap ToJSON '[ts, s, i, m, q, t, o] => ToJSON (KindCtx ts s i m q t o) where
+  toJSON (KindCtx ts s i m q t o) = 
     object [
       "typesides" .= ts,
-      "schema" .= s
+      "schema" .= s,
+      "instance" .= i,
+      "m" .= m,
+      "q" .= q,
+      "t" .= t,
+      "o" .= o
     ]
     
