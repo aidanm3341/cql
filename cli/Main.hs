@@ -65,9 +65,9 @@ outputJSON = do
   return ()
   where
     showResult r = case r of
-      Right (_, types, env) ->
-        B.unpack (encodePretty (toJSON types))
-        ++
+      Right (_, _, env) ->
+        -- B.unpack (encodePretty (toJSON types))
+        -- ++
         B.unpack (encodePretty (toJSON env))
       Left err -> err
 
