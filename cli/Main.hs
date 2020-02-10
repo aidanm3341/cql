@@ -33,15 +33,25 @@ import qualified Data.ByteString.Lazy.Char8 as B
 
 --------------------------
 import Options.Applicative
+import Language.CQL.Common
+import Language.CQL.Program
 import Data.Semigroup ((<>))
 
--- data Args = Args
---   { json :: Bool }
+data Args = Args
+  { format :: String
+  , files :: [String] }
 
-args :: Parser Bool
-args = switch
-          ( long "json"
-         <> help "Output to the json format" )
+-- args :: Parser Bool
+-- args = switch
+--           ( long "json"
+--          <> help "Output to the json format" )
+args :: Parser Args
+args = Args 
+    <$> strOption
+      (  long "format"
+      <> help "which format to output to"
+      <> metavar "FORMAT_TYPE")
+    <*> some (argument str (metavar "FILES"))
 
 
 main :: IO ()
@@ -52,23 +62,44 @@ main = greet =<< execParser opts
     <> progDesc "Print a greeting for TARGET"
     <> header "hello - a test for optparse-applicative" )
 
-greet :: Bool -> IO ()
-greet True = outputJSON --putStrLn $ "{'test' : 'boom'}"
-greet False = cql
+-- checkJSONArg :: IO ()
+-- checkJSONArg = do
+--   args <- getArgs 
+--   json <- if elem "--fmt=json" args then True else False 
+--   _ <- delete "--fmt=json" args
 
 
-outputJSON :: IO ()
-outputJSON = do
-  -- args <- getArgs
-  src  <- mapM readFile ["examples/Employee.cql"] -- args
-  _    <- mapM (putStrLn . showResult . runProg) src
+greet :: Args -> IO ()
+greet (Args "json" s) = output outputJSON s
+greet (Args _ s) = output outputCQL s
+
+output :: (Err (Prog, Types, Env) -> String) -> [String] -> IO () 
+output f s = do
+  src  <- mapM readFile s
+  _    <- mapM (putStrLn . f . runProg) src
   return ()
-  where
-    showResult r = case r of
+
+
+outputJSON :: Err (Prog, Types, Env) -> String 
+outputJSON r = case r of
       Right (_, _, env) ->
-        -- B.unpack (encodePretty (toJSON types))
-        -- ++
         B.unpack (encodePretty (toJSON env))
+      Left err -> err
+
+outputCQL :: Err (Prog, Types, Env) -> String
+outputCQL r = case r of
+      Right (_, types, env) ->
+        "////////////////////////////////////////////////////////////////////////////////\n" ++
+        "// types                                                                      //\n" ++
+        "////////////////////////////////////////////////////////////////////////////////\n" ++
+        "\n" ++
+        "\n" ++
+        show types ++
+        "////////////////////////////////////////////////////////////////////////////////\n" ++
+        "// environment                                                                //\n" ++
+        "////////////////////////////////////////////////////////////////////////////////\n" ++
+        "\n" ++
+        show env
       Left err -> err
 
 ---------------------
