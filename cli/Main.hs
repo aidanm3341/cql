@@ -61,14 +61,8 @@ main = greet =<< execParser opts
  where
    opts = info (args <**> helper)
      ( fullDesc
-    <> progDesc "Print a greeting for TARGET"
-    <> header "hello - a test for optparse-applicative" )
-
--- checkJSONArg :: IO ()
--- checkJSONArg = do
---   args <- getArgs 
---   json <- if elem "--fmt=json" args then True else False 
---   _ <- delete "--fmt=json" args
+    -- <> progDesc "A decription for CQL"
+    <> header "CQL - Categorical Query Language" )
 
 
 greet :: Args -> IO ()
@@ -106,24 +100,24 @@ outputCQL r = case r of
 
 ---------------------
 
-cql :: IO ()
-cql = do
-  args <- getArgs
-  src  <- mapM readFile args
-  _    <- mapM (putStrLn . showResult . runProg) src
-  return ()
-  where
-    showResult r = case r of
-      Right (_, types, env) ->
-        "////////////////////////////////////////////////////////////////////////////////\n" ++
-        "// types                                                                      //\n" ++
-        "////////////////////////////////////////////////////////////////////////////////\n" ++
-        "\n" ++
-        "\n" ++
-        show types ++
-        "////////////////////////////////////////////////////////////////////////////////\n" ++
-        "// environment                                                                //\n" ++
-        "////////////////////////////////////////////////////////////////////////////////\n" ++
-        "\n" ++
-        show env
-      Left err -> err
+-- cql :: IO ()
+-- cql = do
+--   args <- getArgs
+--   src  <- mapM readFile args
+--   _    <- mapM (putStrLn . showResult . runProg) src
+--   return ()
+--   where
+--     showResult r = case r of
+--       Right (_, types, env) ->
+--         "////////////////////////////////////////////////////////////////////////////////\n" ++
+--         "// types                                                                      //\n" ++
+--         "////////////////////////////////////////////////////////////////////////////////\n" ++
+--         "\n" ++
+--         "\n" ++
+--         show types ++
+--         "////////////////////////////////////////////////////////////////////////////////\n" ++
+--         "// environment                                                                //\n" ++
+--         "////////////////////////////////////////////////////////////////////////////////\n" ++
+--         "\n" ++
+--         show env
+--       Left err -> err
