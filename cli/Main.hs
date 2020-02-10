@@ -27,7 +27,7 @@ module Main where
 import           Language.CQL
 import           System.Environment
 
-import           Data.Aeson
+import           Data.Aeson --hiding (Options)
 import           Data.Aeson.Encode.Pretty
 import qualified Data.ByteString.Lazy.Char8 as B
 

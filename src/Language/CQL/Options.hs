@@ -19,9 +19,11 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -}
 {-# LANGUAGE EmptyDataDeriving #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Language.CQL.Options where
 
+import           Data.Aeson hiding (Options)
 import           Data.Void
 import           Language.CQL.Common (Err, intercalate, lower)
 import           Text.Read
@@ -32,6 +34,14 @@ data Options = Options {
   sOps :: StringOption -> String
 --  cOps :: Map CharOption Char -- not needed for now
 }
+
+instance ToJSON Options where
+  toJSON y = 
+    object [
+      "iOps" .= (map (\x -> toJSON (iOps y x)) opsI)
+      , "bOps" .= (map (\x -> toJSON (bOps y x)) opsB)
+      , "sOps" .= (map (\x -> toJSON (sOps y x)) opsS)
+    ]
 
 instance Show Options where
   show y = intercalate "\n" (map (\x -> show x ++ " = " ++ show (iOps y x)) opsI) ++ "\n" ++
