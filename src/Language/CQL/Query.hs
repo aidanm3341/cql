@@ -59,7 +59,7 @@ data Query var ty sym en fk att en' fk' att'
   , ens  :: Map en'  (Ctx  var en, Set (EQ   var ty   sym  en fk att  Void Void))
   , fks  :: Map fk'  (Ctx  var         (Term var Void Void en fk Void Void Void))
   , atts :: Map att'                   (Term var ty   sym  en fk att  Void Void)
-  }
+  } deriving (Generic)
 
 instance TyMap Show '[var, ty, sym, en, fk, att, en', fk', att']
   => Show (Query var ty sym en fk att en' fk' att') where
@@ -80,7 +80,7 @@ instance (NFData var, NFData ty, NFData sym, NFData en, NFData fk, NFData att, N
 data QueryEx :: * where
   QueryEx
     :: forall var ty sym en fk att en' fk' att'
-    .  (MultiTyMap '[Show, Ord, Typeable, NFData] '[var, ty, sym, en, fk, att, en', fk', att'])
+    .  (MultiTyMap '[Show, Ord, Typeable, NFData, ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, en', fk', att'])
     => Query var ty sym en fk att en' fk' att' -> QueryEx
 
 instance NFData QueryEx where
@@ -126,5 +126,11 @@ typecheckQuery
 typecheckQuery = undefined
 
 --------------------------------------------------------------------------------
+-- JSON
 instance ToJSON QueryExp
 instance ToJSON QueryExpRaw'
+
+instance MultiTyMap '[ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, en', fk', att'] => ToJSON (Query var ty sym en fk att en' fk' att')
+
+instance ToJSON QueryEx where
+  toJSON (QueryEx x) = toJSON x
