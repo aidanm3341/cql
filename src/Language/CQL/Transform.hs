@@ -36,16 +36,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 {-# LANGUAGE TypeOperators         #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE UndecidableInstances  #-}
+{-# LANGUAGE DeriveGeneric         #-}
 
 module Language.CQL.Transform where
 
 import           Control.DeepSeq
+import           Data.Aeson                         hiding (Options)
 import           Data.Map                           (Map, mapWithKey)
 import qualified Data.Map.Strict                    as Map
 import           Data.Maybe
 import qualified Data.Set                           as Set
 import           Data.Typeable
 import           Data.Void
+import           GHC.Generics
 import           Language.CQL.Common
 import           Language.CQL.Instance              as I
 import qualified Language.CQL.Instance.Presentation as IP (Presentation(eqs, gens, sks), toCollage)
@@ -67,7 +70,7 @@ data Transform var ty sym en fk att gen sk x y gen' sk' x' y'
   , dstT :: Instance var ty sym en fk att gen' sk' x' y'
   , gens :: Map gen (Term Void Void Void en fk Void gen' Void)
   , sks  :: Map sk  (Term Void ty   sym  en fk att  gen' sk')
-  }
+  } deriving (Generic)
 
 instance TyMap NFData '[var, ty, sym, en, fk, att, gen, sk, x, y, gen', sk', x', y']
   => NFData (Transform var ty sym en fk att gen sk x y gen' sk' x' y') where
@@ -135,7 +138,7 @@ toMorphism (Transform src' dst' gens' sks') =
 data TransformEx :: * where
   TransformEx
     :: forall var ty sym en fk att gen sk x y gen' sk' x' y'
-    . (MultiTyMap '[Show, Ord, Typeable, NFData] '[var, ty, sym, en, fk, att, gen, sk, x, y, gen', sk', x', y'])
+    . (MultiTyMap '[Show, Ord, Typeable, NFData, ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, gen, sk, x, y, gen', sk', x', y'])
     => Transform var ty sym en fk att gen sk x y gen' sk' x' y'
     -> TransformEx
 
@@ -273,7 +276,7 @@ data TransExpRaw'
 -- | Evaluates a literal into a transform.
 evalTransformRaw
   :: forall var ty sym en fk att gen sk x y gen' sk' x' y'
-  .  (MultiTyMap '[Show, Ord, Typeable, NFData] '[var, ty, sym, en, fk, att, gen, sk, x, y, gen', sk', x', y'])
+  .  (MultiTyMap '[Show, Ord, Typeable, NFData, ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, gen, sk, x, y, gen', sk', x', y'])
   => Instance var ty sym en fk att gen  sk  x  y
   -> Instance var ty sym en fk att gen' sk' x' y'
   -> TransExpRaw'
@@ -357,3 +360,11 @@ evalTransformRaw' src' dst' (TransExpRaw' _ _ sec _ _) is = do
         Just x'2 -> return $ Fk x'2 a'
         Nothing  -> undefined
     evalPath _                                                          = undefined
+
+----------------------------------------------------------------------------------------------------
+-- JSON
+
+instance ToJSON TransformEx where
+  toJSON (TransformEx x) = toJSON x
+
+instance MultiTyMap '[ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, gen, sk, x, y, gen', sk', x', y'] => ToJSON (Transform var ty sym en fk att gen sk x y gen' sk' x' y')
