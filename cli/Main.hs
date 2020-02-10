@@ -50,6 +50,8 @@ args = Args
     <$> strOption
       (  long "format"
       <> help "which format to output to"
+      <> showDefault
+      <> value "cql"
       <> metavar "FORMAT_TYPE")
     <*> some (argument str (metavar "FILES"))
 
