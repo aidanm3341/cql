@@ -65,7 +65,7 @@ data Mapping var ty sym en fk att en' fk' att'
   , ens  :: Map en  en'
   , fks  :: Map fk  (Term () Void Void en' fk' Void Void Void)
   , atts :: Map att (Term () ty   sym  en' fk' att' Void Void)
-  }
+  } deriving (Generic)
 
 instance TyMap NFData '[var, ty, sym, en, fk, att, en', fk', att']
   => NFData (Mapping var ty sym en fk att en' fk' att') where
@@ -170,7 +170,7 @@ instance Deps MappingExp where
 
 data MappingEx :: * where
   MappingEx
-    :: forall var ty sym en fk att en' fk' att' . (MultiTyMap '[Show, Ord, Typeable, NFData] '[var, ty, sym, en, fk, att, en', fk', att'])
+    :: forall var ty sym en fk att en' fk' att' . (MultiTyMap '[Show, Ord, Typeable, NFData, ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, en', fk', att'])
     => Mapping var ty sym en fk att en' fk' att'
     -> MappingEx
 
@@ -300,7 +300,7 @@ evalMappingRaw' src' dst' (MappingExpRaw' _ _ ens0 fks0 atts0 _ _) is = do
 
 -- | Evaluates a literal into a mapping.  Does not typecheck or validate.
 evalMappingRaw
-  :: (MultiTyMap '[Show, Ord, Typeable, NFData] '[var, ty, sym, en, fk, att, en', fk', att'])
+  :: (MultiTyMap '[Show, Ord, Typeable, NFData, ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, en', fk', att'])
   => Schema var ty sym en  fk  att
   -> Schema var ty sym en' fk' att'
   -> MappingExpRaw'
@@ -322,3 +322,8 @@ evalMappingRaw src' dst' t is = do
 --------------------------------------------------------------------------------
 instance ToJSON MappingExp
 instance ToJSON MappingExpRaw'
+
+instance MultiTyMap '[ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, en', fk', att'] => ToJSON (Mapping var ty sym en fk att en' fk' att')
+
+instance ToJSON MappingEx where
+  toJSON (MappingEx x) = toJSON x
