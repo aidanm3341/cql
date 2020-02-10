@@ -36,12 +36,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 {-# LANGUAGE TypeOperators          #-}
 {-# LANGUAGE TypeSynonymInstances   #-}
 {-# LANGUAGE UndecidableInstances   #-}
+{-# LANGUAGE DeriveGeneric         #-}
 
 module Language.CQL where
 
 import           Control.Concurrent
 import           Control.DeepSeq
 import           Control.Exception
+--import           Data.Aeson                         hiding (Options, defaultOptions)
 import           Data.List                          (nub)
 import qualified Data.Map.Strict                    as Map
 import           Data.Maybe
@@ -502,3 +504,6 @@ evalInstance prog env (InstanceDelta f' i o) = do
   return $ InstanceEx r
 
 evalInstance _ _ _ = error "todo"
+
+-------------------------------------------------
+-- JSON

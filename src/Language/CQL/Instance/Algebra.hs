@@ -42,6 +42,7 @@ module Language.CQL.Instance.Algebra where
 
 import           Control.DeepSeq
 import           Control.Monad
+import           Data.Aeson            hiding (Options)
 import qualified Data.Foldable         as Foldable
 import           Data.List             as List hiding (intercalate)
 import           Data.Map.Strict       (Map, (!))
@@ -57,8 +58,6 @@ import           Prelude               hiding (EQ)
 import qualified Text.Tabular          as T
 import qualified Text.Tabular.AsciiArt as Ascii
 import           GHC.Generics
---import           Data.Aeson
---import           Data.Text.Internal
 
 
 -- | An algebra (model) of a 'Schema'.
@@ -173,6 +172,7 @@ type Carrier en fk gen = Term Void Void Void en fk Void gen Void
 
 -- | The generating labelled nulls for the type algebra of the associated instance.
 newtype TalgGen en fk att gen sk = MkTalgGen (Either sk (Carrier en fk gen, att))
+  deriving (Generic)
 
 -- | Inlines type-algebra equations of the form @gen = term@.
 --   The hard work is delegated to functions from the 'Term' module.
@@ -314,6 +314,9 @@ prettyEntityTable alg@(Algebra sch en' _ _ _ _ _ _ _) es =
 
 -------------------------------------------------------------------------------
 ----- JSON
+
+instance MultiTyMap '[ToJSON, ToJSONKey] '[en, fk, att, gen, sk] => ToJSON (TalgGen en fk att gen sk)
+instance MultiTyMap '[ToJSON, ToJSONKey] '[en, fk, att, gen, sk] => ToJSONKey (TalgGen en fk att gen sk)
 
 -- instance TyMap ToJSON '[var, ty, sym, en, fk, att, gen, sk, x, y] =>
 --   ToJSON (Algebra var ty sym en fk att gen sk x y)

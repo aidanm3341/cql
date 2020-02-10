@@ -18,6 +18,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -}
+{-# OPTIONS_GHC -fno-warn-orphans  #-}
 {-# LANGUAGE AllowAmbiguousTypes   #-}
 {-# LANGUAGE DataKinds             #-}
 {-# LANGUAGE DuplicateRecordFields #-}
@@ -41,6 +42,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 module Language.CQL.Typeside where
 import           Control.DeepSeq
+import           Data.Aeson            hiding (Options)
 import           Data.Bifunctor        (first)
 import           Data.List             (nub)
 import           Data.Map.Strict       hiding (foldr)
@@ -56,7 +58,7 @@ import           Language.CQL.Options
 import           Language.CQL.Prover
 import           Language.CQL.Term
 import           Prelude               hiding (EQ)
-import           Data.Aeson            hiding (Options)
+
 
 -- | A user-defined kind for customization of data types.
 data Typeside var ty sym
@@ -65,7 +67,7 @@ data Typeside var ty sym
   , syms :: Map sym ([ty], ty)
   , eqs  :: Set (Ctx var ty, EQ var ty sym Void Void Void Void Void)
   , eq   :: Ctx var ty -> EQ var ty sym Void Void Void Void Void -> Bool
-  }
+  } 
 
 
 
@@ -101,9 +103,14 @@ tsToCol (Typeside tys syms eqs _) =
   where
     leftify = Set.map (first (fmap Left))
 
+-- data TypesideEx :: * where
+--   TypesideEx
+--     :: forall var ty sym. (MultiTyMap '[Show, Ord, Typeable, NFData] '[var, ty, sym])
+--     => Typeside var ty sym
+--     -> TypesideEx
 data TypesideEx :: * where
   TypesideEx
-    :: forall var ty sym. (MultiTyMap '[Show, Ord, Typeable, NFData] '[var, ty, sym])
+    :: forall var ty sym. (MultiTyMap '[Show, Ord, Typeable, NFData, ToJSON, ToJSONKey] '[var, ty, sym])
     => Typeside var ty sym
     -> TypesideEx
 
@@ -251,19 +258,29 @@ getOptionsTypeside x = case x of
   TypesideRaw (TypesideRaw' _ _ _ o _) -> o
 
   --------------------------------------------------------------------------------------
--- instance (TyMap ToJSON '[var, ty, sym, Void], TyMap ToJSONKey '[var, ty, sym])
---   => ToJSON (Typeside var ty sym) where
---   toJSON (Typeside tys syms eqs _) =
---     object [
---       "tys" .= tys
---       , "syms" .= syms
---       , "eqs" .= eqs
---     ]
-
--- instance ToJSON TypesideExp where
---   toJSON _ = object ["test" .= True]
+instance (TyMap ToJSON '[var, ty, sym, Void], TyMap ToJSONKey '[var, ty, sym])
+  => ToJSON (Typeside var ty sym) where
+  toJSON (Typeside tys syms eqs _) =
+    object [
+      "tys" .= tys
+      , "syms" .= syms
+      , "eqs" .= eqs
+    ]
 
 
 
 instance ToJSON TypesideRaw'
 instance ToJSON TypesideExp
+
+instance (ToJSON TypesideEx) where
+  toJSON (TypesideEx i) = toJSON i
+
+instance ToJSON Void where
+  toJSON = absurd
+  {-# INLINE toJSON #-}
+
+  toEncoding = absurd
+  {-# INLINE toEncoding #-}
+
+instance ToJSONKey Void where
+ 

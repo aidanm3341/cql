@@ -35,16 +35,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 {-# LANGUAGE TypeOperators         #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE UndecidableInstances  #-}
+{-# LANGUAGE DeriveGeneric         #-}
 
 module Language.CQL.Instance.Presentation where
 
 import           Control.DeepSeq       (deepseq, NFData(..))
+import           Data.Aeson
 import           Data.Map.Strict       (Map)
 import qualified Data.Map.Strict       as Map
 import           Data.Maybe            ()
 import           Data.Set              (Set)
 import qualified Data.Set              as Set
 import           Data.Void
+import           GHC.Generics
 import           Language.CQL.Collage  (Collage(..), typeOfCol)
 import           Language.CQL.Common   (Err, MultiTyMap, TyMap, type (+), section, sepTup, intercalate)
 import           Language.CQL.Schema   (Schema, schToCol)
@@ -57,7 +60,7 @@ data Presentation var ty sym en fk att gen sk
   { gens :: Map gen en
   , sks  :: Map sk ty
   , eqs  :: Set (EQ Void ty sym en fk att gen sk)
-  }
+  } deriving (Generic)
 
 instance TyMap Show '[var, ty, sym, en, fk, att, gen, sk]
   => Show (Presentation var ty sym en fk att gen sk) where
@@ -91,3 +94,9 @@ toCollage sch (Presentation gens' sks' eqs') =
     schcol = schToCol sch
     e1 = Set.map (\(   EQ (l,r)) -> (Map.empty, EQ (upp l, upp r))) $ eqs'
     e2 = Set.map (\(g, EQ (l,r)) -> (g,         EQ (upp l, upp r))) $ ceqs schcol
+
+-------------------------------------------------------------------------------
+-- JSON
+
+instance MultiTyMap '[ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, gen, sk] => ToJSON (Presentation var ty sym en fk att gen sk)
+

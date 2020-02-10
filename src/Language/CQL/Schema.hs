@@ -36,7 +36,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 {-# LANGUAGE TypeOperators         #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE UndecidableInstances  #-}
---{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE DeriveGeneric         #-}
 
 module Language.CQL.Schema where
@@ -45,6 +45,7 @@ import           Data.List             (nub)
 import           Data.Map.Strict       as Map
 import           Data.Maybe
 import           Data.Set              as Set
+--import qualified Data.Text             as T
 import           Data.Typeable
 import           Data.Void
 import           GHC.Generics
@@ -94,7 +95,16 @@ instance TyMap Show '[var, ty, sym, en, fk, att]
     where
       fks''   = (\(k,(s,t))     -> show k ++ " : " ++ show s ++ " -> " ++ show t)                                            <$> Map.toList fks'
       atts''  = (\(k,(s,t))     -> show k ++ " : " ++ show s ++ " -> " ++ show t)                                            <$> Map.toList atts'
-      eqs'' x = (\(en,EQ (l,r)) -> "forall x : " ++ show en ++ " . " ++ show (mapVar "x" l) ++ " = " ++ show (mapVar "x" r)) <$> Set.toList x
+      eqs'' x = (\(en,EQ (l,r)) -> "forall x : " ++ show en ++ " . " ++ show (mapVar ("x"::String) l) ++ " = " ++ show (mapVar ("x"::String) r)) <$> Set.toList x
+
+-- x1 :: String
+-- x1 = "foo"
+
+-- x2 :: Text
+-- x2 = T.pack "bar"
+
+-- "foo" :: String
+-- "foo" :: Text
 
 -- | Checks that the underlying theory is well-sorted.
 -- I.e. rule out "1" = one kind of errors.
@@ -174,7 +184,7 @@ instance Deps SchemaExp where
 
 data SchemaEx :: * where
   SchemaEx
-    :: forall var ty sym en fk att . (MultiTyMap '[Show, Ord, Typeable, NFData] '[var, ty, sym, en, fk, att])
+    :: forall var ty sym en fk att . (MultiTyMap '[Show, Ord, Typeable, NFData, ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att])
     => Schema var ty sym en fk att
     -> SchemaEx
 
@@ -300,7 +310,7 @@ evalSchemaRaw' x (SchemaExpRaw' _ ens'x fks'x atts'x peqs oeqs _ _) is = do
 
 -- | Evaluate a typeside into a theory.  Does not validate.
 evalSchemaRaw
-  :: (MultiTyMap '[Show, Ord, Typeable, NFData] '[var, ty, sym])
+  :: (MultiTyMap '[Show, Ord, Typeable, NFData, ToJSON, ToJSONKey] '[var, ty, sym])
   => Options
   -> Typeside var ty sym
   -> SchemaExpRaw'
@@ -322,15 +332,28 @@ evalSchemaRaw ops ty t a' = do
 ----------------------------------------------------
 instance ToJSON SchemaExpRaw'
 instance ToJSON SchemaExp
--- instance (TyMap ToJSON '[var, ty, sym, en, fk, att, Void], TyMap ToJSONKey '[var, ty, sym, fk, att])
---   => ToJSON (Schema var ty sym en fk att)
---   where
---     toJSON (Schema typeside ens fks atts path_eqs obs_eqs _) =
---       object [
---         "typeside"   .= typeside
---         , "ens"      .= ens
---         , "fks"      .= fks
---         , "atts"     .= atts
---         , "path_eqs" .= path_eqs
---         , "obs_eqs"  .= obs_eqs
---       ]
+
+instance (TyMap ToJSON '[var, ty, sym, en, fk, att, Void], TyMap ToJSONKey '[var, ty, sym, fk, att])
+  => ToJSON (Schema var ty sym en fk att)
+  where
+    toJSON (Schema typeside ens fks atts path_eqs obs_eqs _) =
+      -- object [
+      --   ("typeside" :: T.Text) .= typeside
+      --   , ("ens"::T.Text)      .= ens
+      --   , ("fks"::T.Text)      .= fks
+      --   , ("atts"::T.Text)     .= atts
+      --   , ("path_eqs"::T.Text) .= path_eqs
+      --   , ("obs_eqs"::T.Text)  .= obs_eqs
+      -- ]
+      object [
+        "typeside"   .= typeside
+        , "ens"      .= ens
+        , "fks"      .= fks
+        , "atts"     .= atts
+        , "path_eqs" .= path_eqs
+        , "obs_eqs"  .= obs_eqs
+      ]
+
+instance ToJSON SchemaEx where
+  toJSON (SchemaEx s) = toJSON s
+

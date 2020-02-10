@@ -18,6 +18,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -}
+{-# OPTIONS_GHC -fno-warn-orphans  #-}
 {-# LANGUAGE AllowAmbiguousTypes   #-}
 {-# LANGUAGE DataKinds             #-}
 {-# LANGUAGE DuplicateRecordFields #-}
@@ -36,6 +37,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE UndecidableInstances  #-}
 {-# LANGUAGE DeriveGeneric         #-}
+{-# LANGUAGE OverloadedStrings     #-}
 
 module Language.CQL.Instance where
 
@@ -74,7 +76,7 @@ data Instance var ty sym en fk att gen sk x y
   , pres    :: Presentation var  ty sym en fk att gen sk
   , dp      :: EQ           Void ty sym en fk att gen sk     -> Bool
   , algebra :: Algebra      var  ty sym en fk att gen sk x y
-  }
+  } deriving (Generic)
 
 -- | True if the type algebra is empty, which approximates it being free,
 -- which approximates it being conservative over the typeside.
@@ -96,7 +98,7 @@ instance TyMap NFData '[var, ty, sym, en, fk, att, gen, sk, x, y]
 data InstanceEx :: * where
   InstanceEx
     :: forall var ty sym en fk att gen sk x y
-    .  (MultiTyMap '[Show, Ord, Typeable, NFData] '[var, ty, sym, en, fk, att, gen, sk, x, y])
+    .  (MultiTyMap '[Show, Ord, Typeable, NFData, ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, gen, sk, x, y])
     => Instance var ty sym en fk att gen sk x y
     -> InstanceEx
 
@@ -420,7 +422,9 @@ evalInstanceRaw' sch (InstExpRaw' _ gens0 eqs' _ _) is = do
         Nothing -> Left $ "Cannot type: " ++ v
 
 evalInstanceRaw
-  :: (MultiTyMap '[Show, Ord, Typeable, NFData] '[var, ty, sym, en, fk, att])
+  :: (MultiTyMap '[Show, Ord, Typeable, NFData, ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att])
+  -- ,(ToJSONKey (Either Sk (Gen, att)))
+  -- ,(ToJSONKey (Carrier en fk Gen)))
   => Options
   -> Schema var ty sym en fk att
   -> InstExpRaw'
@@ -648,3 +652,18 @@ instance (TyMap Show '[var, ty, sym, en, fk, att, gen, sk, x, y], Eq en, Eq fk, 
 
 instance ToJSON InstanceExp
 instance ToJSON InstExpRaw'
+
+instance ToJSON InstanceEx where
+  toJSON (InstanceEx i) = toJSON i
+
+instance MultiTyMap '[ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, gen, sk, x, y] =>
+  ToJSON (Instance var ty sym en fk att gen sk x y)
+    where
+    toJSON (Instance schema _ _ _) =
+        object [
+          "schema" .= schema
+        -- , "pres" .= pres
+        -- , "algebra" .= algebra
+        ]
+
+instance TyMap ToJSON '[a, b] => ToJSONKey (Either a b) where

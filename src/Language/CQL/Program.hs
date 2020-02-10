@@ -95,6 +95,9 @@ data KindCtx ts s i m q t o
   , other      :: o
   } deriving (Generic)
 
+
+  
+
 -- | A CQL program.
 type Prog = KindCtx TypesideExp SchemaExp InstanceExp MappingExp QueryExp TransformExp [(String, String)]
 

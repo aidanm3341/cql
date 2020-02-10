@@ -397,10 +397,13 @@ hasTypeType' (EQ (lhs, _)) = hasTypeType lhs
 
 -----------------------------------------------
 -- JSON
--- instance TyMap ToJSON '[var, ty, sym, en, fk, att, gen, sk] =>
---   ToJSON (Term var ty sym en fk att gen sk)
+instance TyMap ToJSON '[var, ty, sym, en, fk, att, gen, sk] =>
+  ToJSON (Term var ty sym en fk att gen sk)
 
--- instance TyMap ToJSON '[var, ty, sym, en, fk, att, gen, sk] =>
---   ToJSON (EQ var ty sym en fk att gen sk)
+instance MultiTyMap '[ToJSONKey, ToJSON] '[var, ty, sym, en, fk, att, gen, sk] =>
+  ToJSONKey (Term var ty sym en fk att gen sk)
+
+instance TyMap ToJSON '[var, ty, sym, en, fk, att, gen, sk] =>
+  ToJSON (EQ var ty sym en fk att gen sk)
 
 instance ToJSON RawTerm
