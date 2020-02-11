@@ -662,8 +662,8 @@ instance MultiTyMap '[ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, gen, sk, x
     toJSON (Instance schema _ _ _) =
         object [
           "schema" .= schema
-        -- , "pres" .= pres
-        -- , "algebra" .= algebra
+         -- , "pres" .= pres
+         -- , "algebra" .= algebra
         ]
 
 instance TyMap ToJSON '[a, b] => ToJSONKey (Either a b) where

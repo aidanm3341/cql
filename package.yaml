@@ -50,6 +50,7 @@ dependencies:
 - term-rewriting
 - tabular
 - deepseq
+- text
 - twee-lib
 - optparse-applicative
 - pretty

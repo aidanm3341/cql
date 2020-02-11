@@ -25,7 +25,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 module Main where
 
 import           Language.CQL
-import           System.Environment
 
 import           Data.Aeson --hiding (Options)
 import           Data.Aeson.Encode.Pretty

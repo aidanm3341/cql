@@ -24,6 +24,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 module Language.CQL.Options where
 
 import           Data.Aeson hiding (Options)
+import qualified Data.Text as T
 import           Data.Void
 import           Language.CQL.Common (Err, intercalate, lower)
 import           Text.Read
@@ -34,14 +35,6 @@ data Options = Options {
   sOps :: StringOption -> String
 --  cOps :: Map CharOption Char -- not needed for now
 }
-
-instance ToJSON Options where
-  toJSON y = 
-    object [
-      "iOps" .= (map (\x -> toJSON (iOps y x)) opsI)
-      , "bOps" .= (map (\x -> toJSON (bOps y x)) opsB)
-      , "sOps" .= (map (\x -> toJSON (sOps y x)) opsS)
-    ]
 
 instance Show Options where
   show y = intercalate "\n" (map (\x -> show x ++ " = " ++ show (iOps y x)) opsI) ++ "\n" ++
@@ -192,3 +185,12 @@ type CharOption = Void
  --  Csv_Escape_Char
  --  Csv_Quote_Char
  --  deriving (Eq, Ord, Show, Enum)
+
+---------------------------------------------------------------------------------
+-- JSON
+
+instance ToJSON Options where
+  toJSON y = 
+    object ((map (\x -> T.pack (show x) .= (iOps y x)) opsI)
+        ++ (map (\x -> T.pack (show x) .= (bOps y x)) opsB)
+        ++ (map (\x -> T.pack (show x) .= (sOps y x)) opsS))
