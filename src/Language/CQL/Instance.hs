@@ -656,14 +656,14 @@ instance ToJSON InstExpRaw'
 instance ToJSON InstanceEx where
   toJSON (InstanceEx i) = toJSON i
 
-instance MultiTyMap '[ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, gen, sk, x, y] =>
+instance MultiTyMap '[ToJSON, ToJSONKey, Show] '[var, ty, sym, en, fk, att, gen, sk, x, y] =>
   ToJSON (Instance var ty sym en fk att gen sk x y)
     where
-    toJSON (Instance schema _ _ _) =
+    toJSON (Instance _ pres _ _) =
         object [
-          "schema" .= schema
-         -- , "pres" .= pres
-         -- , "algebra" .= algebra
+          -- "schema" .= schema
+          "pres" .= pres
+          -- , "algebra" .= algebra
         ]
 
 instance TyMap ToJSON '[a, b] => ToJSONKey (Either a b) where

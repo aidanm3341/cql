@@ -36,6 +36,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE UndecidableInstances  #-}
 {-# LANGUAGE DeriveGeneric         #-}
+{-# LANGUAGE OverloadedStrings     #-}
 
 module Language.CQL.Instance.Presentation where
 
@@ -98,5 +99,21 @@ toCollage sch (Presentation gens' sks' eqs') =
 -------------------------------------------------------------------------------
 -- JSON
 
-instance MultiTyMap '[ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, gen, sk] => ToJSON (Presentation var ty sym en fk att gen sk)
+-- this is the old one which works?
+-- instance MultiTyMap '[ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, gen, sk] => 
+--   ToJSON (Presentation var ty sym en fk att gen sk)
+
+instance MultiTyMap '[ToJSON, ToJSONKey, Show] '[var, ty, sym, en, fk, att, gen, sk] => 
+   ToJSON (Presentation var ty sym en fk att gen sk)
+    where
+      toJSON (Presentation gens sks eqs) = 
+        object [
+          "gens" .= toJSON gens,
+          "sks" .= toJSON sks,
+          "eqs" .= (Set.map (dropSlashes . show) eqs)
+        ]
+        where
+          dropSlashes = filter ('\"' /=)
+
+
 

@@ -1,0 +1,409 @@
+{
+    "other": {
+        "Prover": "auto",
+        "Require_Consistency": true,
+        "Allow_Empty_Sorts_Unsafe": true,
+        "Interpret_As_Algebra": false,
+        "Program_Allow_Nontermination_Unsafe": true,
+        "Program_Allow_Nonconfluence_Unsafe": false,
+        "Dont_Validate_Unsafe": false,
+        "Timeout": 30
+    },
+    "queries": {},
+    "mappings": {},
+    "schemas": {
+        "S": {
+            "atts": {
+                "first": [
+                    "Employee",
+                    "string"
+                ],
+                "age": [
+                    "Employee",
+                    "nat"
+                ],
+                "name": [
+                    "Department",
+                    "string"
+                ],
+                "last": [
+                    "Employee",
+                    "string"
+                ]
+            },
+            "typeside": {
+                "syms": {
+                    "Bob": [
+                        [],
+                        "string"
+                    ],
+                    "Cork": [
+                        [],
+                        "string"
+                    ],
+                    "Akin": [
+                        [],
+                        "string"
+                    ],
+                    "Bo": [
+                        [],
+                        "string"
+                    ],
+                    "Dunn": [
+                        [],
+                        "string"
+                    ],
+                    "Carl": [
+                        [],
+                        "string"
+                    ],
+                    "zero": [
+                        [],
+                        "nat"
+                    ],
+                    "plus": [
+                        [
+                            "nat",
+                            "nat"
+                        ],
+                        "nat"
+                    ],
+                    "CS": [
+                        [],
+                        "string"
+                    ],
+                    "Math": [
+                        [],
+                        "string"
+                    ],
+                    "Dan": [
+                        [],
+                        "string"
+                    ],
+                    "Aidan": [
+                        [],
+                        "string"
+                    ],
+                    "succ": [
+                        [
+                            "nat"
+                        ],
+                        "nat"
+                    ]
+                },
+                "eqs": [],
+                "tys": [
+                    "nat",
+                    "string"
+                ]
+            },
+            "path_eqs": [],
+            "ens": [
+                "Department",
+                "Employee"
+            ],
+            "obs_eqs": [],
+            "fks": {
+                "worksIn": [
+                    "Employee",
+                    "Department"
+                ],
+                "manager": [
+                    "Employee",
+                    "Employee"
+                ],
+                "secretary": [
+                    "Department",
+                    "Employee"
+                ]
+            }
+        }
+    },
+    "typesides": {
+        "T": {
+            "syms": {
+                "Bob": [
+                    [],
+                    "string"
+                ],
+                "Cork": [
+                    [],
+                    "string"
+                ],
+                "Akin": [
+                    [],
+                    "string"
+                ],
+                "Bo": [
+                    [],
+                    "string"
+                ],
+                "Dunn": [
+                    [],
+                    "string"
+                ],
+                "Carl": [
+                    [],
+                    "string"
+                ],
+                "zero": [
+                    [],
+                    "nat"
+                ],
+                "plus": [
+                    [
+                        "nat",
+                        "nat"
+                    ],
+                    "nat"
+                ],
+                "CS": [
+                    [],
+                    "string"
+                ],
+                "Math": [
+                    [],
+                    "string"
+                ],
+                "Dan": [
+                    [],
+                    "string"
+                ],
+                "Aidan": [
+                    [],
+                    "string"
+                ],
+                "succ": [
+                    [
+                        "nat"
+                    ],
+                    "nat"
+                ]
+            },
+            "eqs": [],
+            "tys": [
+                "nat",
+                "string"
+            ]
+        }
+    },
+    "transforms": {},
+    "instances": {
+        "J": {
+            "schema": {
+                "atts": {
+                    "first": [
+                        "Employee",
+                        "string"
+                    ],
+                    "age": [
+                        "Employee",
+                        "nat"
+                    ],
+                    "name": [
+                        "Department",
+                        "string"
+                    ],
+                    "last": [
+                        "Employee",
+                        "string"
+                    ]
+                },
+                "typeside": {
+                    "syms": {
+                        "Bob": [
+                            [],
+                            "string"
+                        ],
+                        "Cork": [
+                            [],
+                            "string"
+                        ],
+                        "Akin": [
+                            [],
+                            "string"
+                        ],
+                        "Bo": [
+                            [],
+                            "string"
+                        ],
+                        "Dunn": [
+                            [],
+                            "string"
+                        ],
+                        "Carl": [
+                            [],
+                            "string"
+                        ],
+                        "zero": [
+                            [],
+                            "nat"
+                        ],
+                        "plus": [
+                            [
+                                "nat",
+                                "nat"
+                            ],
+                            "nat"
+                        ],
+                        "CS": [
+                            [],
+                            "string"
+                        ],
+                        "Math": [
+                            [],
+                            "string"
+                        ],
+                        "Dan": [
+                            [],
+                            "string"
+                        ],
+                        "Aidan": [
+                            [],
+                            "string"
+                        ],
+                        "succ": [
+                            [
+                                "nat"
+                            ],
+                            "nat"
+                        ]
+                    },
+                    "eqs": [],
+                    "tys": [
+                        "nat",
+                        "string"
+                    ]
+                },
+                "path_eqs": [],
+                "ens": [
+                    "Department",
+                    "Employee"
+                ],
+                "obs_eqs": [],
+                "fks": {
+                    "worksIn": [
+                        "Employee",
+                        "Department"
+                    ],
+                    "manager": [
+                        "Employee",
+                        "Employee"
+                    ],
+                    "secretary": [
+                        "Department",
+                        "Employee"
+                    ]
+                }
+            }
+        },
+        "I": {
+            "schema": {
+                "atts": {
+                    "first": [
+                        "Employee",
+                        "string"
+                    ],
+                    "age": [
+                        "Employee",
+                        "nat"
+                    ],
+                    "name": [
+                        "Department",
+                        "string"
+                    ],
+                    "last": [
+                        "Employee",
+                        "string"
+                    ]
+                },
+                "typeside": {
+                    "syms": {
+                        "Bob": [
+                            [],
+                            "string"
+                        ],
+                        "Cork": [
+                            [],
+                            "string"
+                        ],
+                        "Akin": [
+                            [],
+                            "string"
+                        ],
+                        "Bo": [
+                            [],
+                            "string"
+                        ],
+                        "Dunn": [
+                            [],
+                            "string"
+                        ],
+                        "Carl": [
+                            [],
+                            "string"
+                        ],
+                        "zero": [
+                            [],
+                            "nat"
+                        ],
+                        "plus": [
+                            [
+                                "nat",
+                                "nat"
+                            ],
+                            "nat"
+                        ],
+                        "CS": [
+                            [],
+                            "string"
+                        ],
+                        "Math": [
+                            [],
+                            "string"
+                        ],
+                        "Dan": [
+                            [],
+                            "string"
+                        ],
+                        "Aidan": [
+                            [],
+                            "string"
+                        ],
+                        "succ": [
+                            [
+                                "nat"
+                            ],
+                            "nat"
+                        ]
+                    },
+                    "eqs": [],
+                    "tys": [
+                        "nat",
+                        "string"
+                    ]
+                },
+                "path_eqs": [],
+                "ens": [
+                    "Department",
+                    "Employee"
+                ],
+                "obs_eqs": [],
+                "fks": {
+                    "worksIn": [
+                        "Employee",
+                        "Department"
+                    ],
+                    "manager": [
+                        "Employee",
+                        "Employee"
+                    ],
+                    "secretary": [
+                        "Department",
+                        "Employee"
+                    ]
+                }
+            }
+        }
+    }
+}

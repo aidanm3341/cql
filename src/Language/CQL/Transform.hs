@@ -367,4 +367,4 @@ evalTransformRaw' src' dst' (TransExpRaw' _ _ sec _ _) is = do
 instance ToJSON TransformEx where
   toJSON (TransformEx x) = toJSON x
 
-instance MultiTyMap '[ToJSON, ToJSONKey] '[var, ty, sym, en, fk, att, gen, sk, x, y, gen', sk', x', y'] => ToJSON (Transform var ty sym en fk att gen sk x y gen' sk' x' y')
+instance MultiTyMap '[ToJSON, ToJSONKey, Show] '[var, ty, sym, en, fk, att, gen, sk, x, y, gen', sk', x', y'] => ToJSON (Transform var ty sym en fk att gen sk x y gen' sk' x' y')
